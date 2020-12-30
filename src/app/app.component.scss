@@ -1,0 +1,37 @@
+#cy {
+    width: calc(100vw - 0px);
+    height: calc(100vh - 38px);
+    display: block;
+    background-color: #f4f4f4;
+}
+
+.toolbar {
+    display: flex;
+    height: 28px;
+    margin: 5px 0 5px 15px;
+    color: white;
+}
+
+h2 {
+    margin: 0 10px 0 0;
+}
+
+button {
+    margin: 0 0 0 5px;
+}
+
+input {
+    width: 400px;
+}
+
+#logo {
+    position: absolute;
+    z-index: 4000;
+    margin: 40px 0 0 -5px;
+    width: 144px;
+    height: 144px;
+}
+
+form {
+    display: flex;
+}
