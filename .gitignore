@@ -1,0 +1,5 @@
+/dist
+/node_modules
+/.idea
+/backup
+.DS_Store

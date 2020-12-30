@@ -1,0 +1,10 @@
+<div class="toolbar" role="banner">
+    <img id="logo" src="assets/logo.png"/>
+    <h2>camel-net</h2>
+    <form (submit)="onSearchRouteClick(routeName.value)">
+        <input #routeName placeholder="Route name">
+        <button>Search Route</button>
+    </form>
+</div>
+
+<div class="content" role="main" id="cy"></div>
