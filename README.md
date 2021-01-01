@@ -16,6 +16,8 @@ camel-net tries to answer questions to specific challenges when working with Apa
 
 # Demo
 
+Live demo: https://oidamo.de/camel-net/
+
 ![alt text](demo.png "camel-net screenshot")
 
 # Getting started
