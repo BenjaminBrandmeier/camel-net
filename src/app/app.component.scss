@@ -24,13 +24,19 @@
 
     @media (min-width: 600px) {
         input {
-            width: 400px;
+            width: 300px;
         }
     }
 
     @media (max-width: 600px) {
         input {
             width: 100%;
+        }
+    }
+
+    @media (max-width: 500px) {
+        select {
+            display: none;
         }
     }
 
@@ -45,5 +51,9 @@
     form {
         display: flex;
         width: 100%;
+    }
+
+    select {
+        margin: 0 5px 0 0;
     }
 }

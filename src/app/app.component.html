@@ -6,6 +6,9 @@
             <input #routeName placeholder="Route name">
             <button>Search</button>
         </form>
+        <select (change)="onFilterChange($event.target.value)">
+            <option *ngFor="let fileName of allFilenamesContainingRoutes" [value]="fileName" >{{fileName}}</option>
+        </select>
     </div>
 
     <div class="content" role="main" id="cy"></div>
