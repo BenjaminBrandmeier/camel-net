@@ -5,6 +5,7 @@ import {ciseLayout} from './layouts';
 import {edgeStyle, nodeStyle, StylingService} from './styling.service';
 
 const isNodeSelected = (target: any, cy: Core) => target !== cy && !target.isEdge();
+const findNode = (route: string) => e => e.data().id.toUpperCase().includes(route.toUpperCase());
 
 @Component({
     selector: 'app-root',
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit {
     }
 
     onSearchRouteClick(route: string): boolean {
-        const searchResult = this.allElements().filter(e => e.data().id.includes(route));
+        const searchResult = this.allElements().filter(findNode(route));
 
         if (searchResult.length > 1) {
             alert('Found more than one:\n' + searchResult.map(e => e.data().id).join('\n'));
@@ -61,5 +62,4 @@ export class AppComponent implements OnInit {
     }
 
     private allElements = (): CollectionReturnValue => this.cy.elements();
-
 }

@@ -12,6 +12,7 @@ function createVisualizationData(): void {
     const visualizationData = buildElements(mapOfRoutes);
 
     writeDataToFile(visualizationData);
+    console.log('Finished.');
 }
 
 const readInput = (fileName: string) => Deno.readTextFileSync('files/' + fileName);
