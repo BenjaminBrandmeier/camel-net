@@ -23,8 +23,13 @@ function buildVisualizationDataForSingleFile(file: Deno.DirEntry): string {
     const qualifier = file.name.substr(0, file.name.indexOf('.'));
     const mapOfStaticImports = buildStaticImportsMap(fileAsText);
     const allRouteDefinitionsAsText = getAllRouteDefinitions(fileAsText);
-    const mapOfRoutes = buildRouteMap(allRouteDefinitionsAsText, mapOfStaticImports, new Map(), qualifier);
-    return buildCytoscapeElements(mapOfRoutes, file.name);
+    if (allRouteDefinitionsAsText) {
+        const mapOfRoutes = buildRouteMap(allRouteDefinitionsAsText, mapOfStaticImports, new Map(), qualifier);
+        return buildCytoscapeElements(mapOfRoutes, file.name);
+    } else {
+        console.error('Skipping', file.name, '(no routes could be identified within in this file.)');
+        return '';
+    }
 }
 
 function buildStaticImportsMap(code: string): Map<string, string> {
