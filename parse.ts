@@ -1,7 +1,7 @@
 function createVisualizationData(): void {
     const allFilesToBeParsed = Deno.readDirSync('files');
     let mapOfRoutes = new Map();
-    [...allFilesToBeParsed].forEach(f => {
+    [...allFilesToBeParsed].filter(f => f.name !== '.gitignore').forEach(f => {
         const fileAsText = readInput(f.name);
         const qualifier = f.name.substr(0, f.name.indexOf('.'));
         console.log('Parsing', f.name);
