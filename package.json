@@ -11,7 +11,8 @@
         "start": "ng serve",
         "build": "ng build",
         "test": "ng test",
-        "lint": "ng lint"
+        "lint": "ng lint",
+        "postbuild": "sed -ie 's/<base href=\"\\/\">/<base href=\"\\/camel-net\\/\">/g' dist/camel-net/index.html"
     },
     "private": true,
     "dependencies": {
