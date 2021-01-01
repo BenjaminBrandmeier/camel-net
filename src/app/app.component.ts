@@ -49,6 +49,7 @@ export class AppComponent implements OnInit {
             layout: ciseLayout,
         });
         this.cy.bind('click', this.onGraphElementClick(this.cy));
+        this.cy.bind('tap', this.onGraphElementClick(this.cy));
     }
 
     private onGraphElementClick(cy: Core): (event) => void {
