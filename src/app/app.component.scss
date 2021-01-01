@@ -1,37 +1,49 @@
-#cy {
-    width: calc(100vw - 0px);
-    height: calc(100vh - 38px);
-    display: block;
-    background-color: #f4f4f4;
-}
+.camel-net-container {
+    #cy {
+        width: calc(100vw - 0px);
+        height: calc(100vh - 38px);
+        display: block;
+        background-color: #f4f4f4;
+    }
 
-.toolbar {
-    display: flex;
-    height: 28px;
-    margin: 5px 0 5px 15px;
-    color: white;
-}
+    .toolbar {
+        display: flex;
+        height: 28px;
+        margin: 5px 0 5px 15px;
+        color: white;
+    }
 
-h2 {
-    margin: 0 10px 0 0;
-}
+    h2 {
+        margin: 0 10px 0 0;
+        white-space: nowrap;
+    }
 
-button {
-    margin: 0 0 0 5px;
-}
+    button {
+        margin: 0 5px 0 5px;
+    }
 
-input {
-    width: 400px;
-}
+    @media (min-width: 600px) {
+        input {
+            width: 400px;
+        }
+    }
 
-#logo {
-    position: absolute;
-    z-index: 4000;
-    margin: 40px 0 0 -5px;
-    width: 144px;
-    height: 144px;
-}
+    @media (max-width: 600px) {
+        input {
+            width: 100%;
+        }
+    }
 
-form {
-    display: flex;
+    #logo {
+        position: absolute;
+        z-index: 4000;
+        margin: 40px 0 0 -5px;
+        width: 144px;
+        height: 144px;
+    }
+
+    form {
+        display: flex;
+        width: 100%;
+    }
 }
