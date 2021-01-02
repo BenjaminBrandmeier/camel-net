@@ -3,7 +3,7 @@
 
 This is an attempt to create visualizations for Apache Camel routes.
 
-The project visualizes dependencies between Camel routes within a single Java file or accross multiple files. 
+The project visualizes dependencies between Camel routes across multiple packages within a single or multiple Java files. 
 It provides a primitive search for routes and highlights all predecessors and successors of selected nodes inside a graph.
 
 camel-net tries to answer questions to specific challenges when working with Apache Camel. If you have more ideas about challenges that could be solved with this kind of an approach (or similar), please let me know.
