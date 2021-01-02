@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import cytoscape, {CollectionReturnValue, Core, ElementDefinition} from 'cytoscape';
 import cise from 'cytoscape-cise';
 import {LayoutService} from './layout/layout.service';
@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
     private cy: Core;
     private filter = '';
     private data: ElementDefinition[];
+    private focusedNode = null;
 
     constructor(private readonly stylingService: StylingService,
                 private readonly layoutService: LayoutService,
@@ -59,8 +60,10 @@ export class AppComponent implements OnInit {
     private onGraphElementClick(cy: Core): (event) => void {
         return (event) => {
             this.allElements().forEach(e => this.stylingService.colorElement(e, 'grey'));
+            this.focusedNode = null;
             const target = event.target;
             if (isNodeSelected(target, cy)) {
+                this.focusedNode = target;
                 this.stylingService.colorDependencyPath(target, this.allElements());
             }
         };
@@ -90,4 +93,11 @@ export class AppComponent implements OnInit {
     }
 
     private allElements = (): CollectionReturnValue => this.cy.elements();
+
+    @HostListener('window:keydown', ['$event'])
+    onKeydown($event: KeyboardEvent): void {
+        if ($event?.key === 'Delete') {
+            this.focusedNode?.remove();
+        }
+    }
 }
