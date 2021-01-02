@@ -23,19 +23,25 @@
     }
 
     @media (min-width: 600px) {
-        input {
+        input#routeName {
             width: 300px;
         }
     }
 
     @media (max-width: 600px) {
-        input {
+        input#routeName {
             width: 100%;
         }
     }
 
     @media (max-width: 500px) {
         select {
+            display: none;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .checkboxContainer {
             display: none;
         }
     }
@@ -55,5 +61,11 @@
 
     select {
         margin: 0 5px 0 0;
+    }
+
+    .checkboxContainer {
+        text-align: right;
+        min-width: 130px;
+        padding: 4px;
     }
 }
