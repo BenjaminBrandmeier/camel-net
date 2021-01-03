@@ -1,18 +1,11 @@
 <div class="camel-net-container">
+    <img id="logo" src="assets/logo.png"/>
     <div class="toolbar" role="banner">
-        <img id="logo" src="assets/logo.png"/>
         <h2>camel-net</h2>
-        <form (submit)="onSearchRouteClick(routeName.value)">
-            <input #routeName placeholder="Route name">
-            <button>Search</button>
-        </form>
-        <div class="checkboxContainer">
-            <input #clusterSwitch type="checkbox" [checked]="isClusteredViaPackages" (change)="changePackageCluster()"/>
-            <span>Package-Cluster</span>
-        </div>
-
-        <select (change)="onFilterChange($event.target.value)">
-            <option *ngFor="let fileName of allFilenamesContainingRoutes" [value]="fileName" >{{fileName}}</option>
+        <input id="routeName" [(ngModel)]="searchText" placeholder="Route name">
+        <button (click)="onSearchRouteClick()">Search</button>
+        <select (change)="onFilterChange($event.target.value)" [(ngModel)]="fileFilter">
+            <option *ngFor="let option of allFilenamesContainingRoutes">{{option}}</option>
         </select>
     </div>
 

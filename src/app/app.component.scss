@@ -34,14 +34,8 @@
         }
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 700px) {
         select {
-            display: none;
-        }
-    }
-
-    @media (max-width: 800px) {
-        .checkboxContainer {
             display: none;
         }
     }
@@ -49,23 +43,13 @@
     #logo {
         position: absolute;
         z-index: 4000;
-        margin: 40px 0 0 -5px;
+        margin: 35px 0 0 5px;
         width: 144px;
         height: 144px;
     }
 
-    form {
-        display: flex;
-        width: 100%;
-    }
-
     select {
-        margin: 0 5px 0 0;
-    }
-
-    .checkboxContainer {
-        text-align: right;
-        min-width: 130px;
-        padding: 4px;
+        margin-right: 5px;
+        margin-left: auto;
     }
 }
