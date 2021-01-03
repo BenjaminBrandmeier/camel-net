@@ -18,6 +18,7 @@ export class LayoutService {
     createNodeClusters(allElements: ElementDefinition[]): string[][] {
         const mapOfClusters: Map<string, string[]> = allElements
             .map(this.toNodesWithPackageQualifiers)
+            .filter(n => !n.id.startsWith('cxf'))
             .reduce(this.toClusters(), new Map());
 
         return [...mapOfClusters.values()];
