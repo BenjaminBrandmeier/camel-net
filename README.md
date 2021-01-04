@@ -23,8 +23,8 @@ Live demo: https://oidamo.de/camel-net/
 # Getting started
 
 1. Clone this repository
-2. Copy all your Java classes containing Camel routes under `files`
-3. Run parser: `deno run --allow-read --allow-write --allow-run parse.ts`
+2. Install Deno (https://deno.land/)
+3. Run parser: `npm run parse -- /path/to/your/project`
 4. Install all npm dependencies: `npm i`
 5. Start server: `npm start`
 6. Open `localhost:4200`

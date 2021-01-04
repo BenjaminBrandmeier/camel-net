@@ -1,34 +1,62 @@
-const readInput = (fileName: string) => Deno.readTextFileSync('files/' + fileName);
-const getAllRouteDefinitions = (code: string) => code.match(/from(.|\n|\r)*?;/g)!;
+import {File} from './data.ts';
+
+const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g)!;
 const shortenQualifier = (s: string) => s.split('').filter(c => [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ.'].includes(c)).join('');
-const removeAllQuotes = (routeDefiniton: string) => routeDefiniton.replace('"', '');
+const removeAllQuotes = (routeDefiniton: string) => routeDefiniton.replaceAll('"', '');
 const isQualifiedAlready = (to: string) => to.includes('.');
 const formatDataToBeValidJson = (visualizationData: string) => '[' + visualizationData.slice(0, -1) + ']';
 const writeDataToFile = (visualizationData: string) => Deno.writeTextFileSync('src/assets/data.json', visualizationData);
+const log = (text: string) => Deno.writeAllSync(Deno.stdout, new TextEncoder().encode(text));
 
-function generateVisualizationDataForAllProvidedFiles(): void {
-    const allFilesToBeParsed = Deno.readDirSync('files');
-    const visualizationData = [...allFilesToBeParsed]
-        .filter(f => f.name !== '.gitignore')
+function start(): void {
+    const camelProjectPath = Deno.args[0];
+    if (camelProjectPath) {
+        generateVisualizationDataForAllProvidedFiles(camelProjectPath);
+    } else {
+        console.error('\x1b[31m\nScan failed!\x1b[0m');
+        console.log('\nNo directory to camel project provided. Usage:\nnpm run parse -- path/to/directory\n');
+    }
+}
+
+function generateVisualizationDataForAllProvidedFiles(projectPath: string): void {
+    const allFilesToBeParsed = findAllFilesToBeParsed(Deno.readDirSync(projectPath), [], projectPath);
+    const visualizationData = allFilesToBeParsed
+        .map(p => ({
+            fullFileName: p.match(/.*\/(.*.java)/)![1],
+            fileName: p.match(/.*\/(.*).java/)![1],
+            path: p,
+        } as File))
         .map(buildVisualizationDataForSingleFile)
+        .filter(v => v)
         .join('\n');
 
     writeDataToFile(formatDataToBeValidJson(visualizationData));
     console.log('Finished.');
 }
 
-function buildVisualizationDataForSingleFile(file: Deno.DirEntry): string {
-    console.log('Parsing', file.name);
-    const fileAsText = readInput(file.name);
-    const qualifier = file.name.substr(0, file.name.indexOf('.'));
-    const mapOfStaticImports = buildStaticImportsMap(fileAsText);
-    const allRouteDefinitionsAsText = getAllRouteDefinitions(fileAsText);
+function findAllFilesToBeParsed(dirEntries: Iterable<Deno.DirEntry>, allFilesToBeParsed: string[], currentPath: string): string[] {
+    [...dirEntries].forEach(d => {
+        if (d.isDirectory) {
+            findAllFilesToBeParsed(Deno.readDirSync(currentPath + '/' + d.name), allFilesToBeParsed, currentPath + '/' + d.name);
+        } else if (d.isFile && d.name.includes('.java') && !d.name.endsWith('Test.java')) {
+            allFilesToBeParsed.push(currentPath + '/' + d.name);
+        }
+    });
+    return allFilesToBeParsed;
+}
+
+function buildVisualizationDataForSingleFile(file: File): string | undefined {
+    log('Parsing ' + file.path);
+    const fileContent = Deno.readTextFileSync(file.path);
+    const mapOfStaticImports = buildStaticImportsMap(fileContent);
+    const allRouteDefinitionsAsText = getAllRouteDefinitions(fileContent);
     if (allRouteDefinitionsAsText) {
-        const mapOfRoutes = buildRouteMap(allRouteDefinitionsAsText, mapOfStaticImports, new Map(), qualifier);
-        return buildCytoscapeElements(mapOfRoutes, file.name);
+        log('\x1b[32m ✔ found route definitions.\x1b[0m\n');
+        const mapOfRoutes = buildRouteMap(allRouteDefinitionsAsText, mapOfStaticImports, new Map(), file.fileName);
+        return buildCytoscapeElements(mapOfRoutes, file.fileName);
     } else {
-        console.error('Skipping', file.name, '(no routes could be identified within in this file.)');
-        return '';
+        console.error('\x1b[31m ✘ no route definitions.\x1b[0m');
+        return undefined;
     }
 }
 
@@ -76,4 +104,4 @@ function buildCytoscapeElements(mapOfRoutes: Map<string, string[]>, file: string
     return visualizationData;
 }
 
-generateVisualizationDataForAllProvidedFiles();
+start();
