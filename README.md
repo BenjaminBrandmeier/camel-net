@@ -31,6 +31,7 @@ Live demo: https://oidamo.de/camel-net/
 
 # Feature plan
 
+* ProducerTemplates
 * UI selection of different cytoscape layouts
 * ...
 
