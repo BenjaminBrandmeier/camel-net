@@ -10,7 +10,8 @@
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
-        "test": "ng test",
+        "test": "jest && npm run test-deno",
+        "test-deno": "deno test parser/test/*.ts --allow-read",
         "lint": "ng lint",
         "parse": "deno run --allow-read --allow-write --allow-run parser/parse.ts",
         "postbuild": "sed -ie 's/<base href=\"\\/\">/<base href=\"\\/camel-net\\/\">/g' dist/camel-net/index.html"
