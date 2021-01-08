@@ -25,13 +25,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: denolib/setup-deno@v2
-      with:
+        with:
           deno-version: v1.x
 
-        # Runs a single command using the runners shell
+      - name: Test parser
+        run: npm run test-parser
+
       - name: Install node dependencies
         run: npm install
 
-      # Runs a single command using the runners shell
-      - name: Test entire project
-        run: npm test
+      - name: Test frontend
+        run: npm run test-frontend
