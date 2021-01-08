@@ -1,4 +1,5 @@
-import {File} from './data.ts';
+import {File} from './types.ts';
+import {parseJavaFile} from './java-parser.ts';
 
 const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g)!;
 const shortenQualifier = (s: string) => s.split('').filter(c => [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ.'].includes(c)).join('');
@@ -19,13 +20,8 @@ function start(): void {
 }
 
 function generateVisualizationDataForAllProvidedFiles(projectPath: string): void {
-    const allFilesToBeParsed = findAllFilesToBeParsed(Deno.readDirSync(projectPath), [], projectPath);
-    const visualizationData = allFilesToBeParsed
-        .map(p => ({
-            fullFileName: p.match(/.*\/(.*.java)/)![1],
-            fileName: p.match(/.*\/(.*).java/)![1],
-            path: p,
-        } as File))
+    const visualizationData = findAllFilesToBeParsed(projectPath, [])
+        .map(parseJavaFile)
         .map(buildVisualizationDataForSingleFile)
         .filter(v => v)
         .join('\n');
@@ -34,10 +30,11 @@ function generateVisualizationDataForAllProvidedFiles(projectPath: string): void
     console.log('Finished.');
 }
 
-function findAllFilesToBeParsed(dirEntries: Iterable<Deno.DirEntry>, allFilesToBeParsed: string[], currentPath: string): string[] {
-    [...dirEntries].forEach(d => {
+function findAllFilesToBeParsed(currentPath: string, allFilesToBeParsed: string[]): string[] {
+    const allFilesInsideCurrentPath = Deno.readDirSync(currentPath);
+    [...allFilesInsideCurrentPath].forEach(d => {
         if (d.isDirectory) {
-            findAllFilesToBeParsed(Deno.readDirSync(currentPath + '/' + d.name), allFilesToBeParsed, currentPath + '/' + d.name);
+            findAllFilesToBeParsed(currentPath + '/' + d.name, allFilesToBeParsed);
         } else if (d.isFile && d.name.includes('.java') && !d.name.endsWith('Test.java')) {
             allFilesToBeParsed.push(currentPath + '/' + d.name);
         }
@@ -49,10 +46,10 @@ function buildVisualizationDataForSingleFile(file: File): string | undefined {
     log('Parsing ' + file.path);
     const fileContent = Deno.readTextFileSync(file.path);
     const mapOfStaticImports = buildStaticImportsMap(fileContent);
-    const allRouteDefinitionsAsText = getAllRouteDefinitions(fileContent);
-    if (allRouteDefinitionsAsText) {
+    const routeDefinitions = getAllRouteDefinitions(fileContent);
+    if (routeDefinitions) {
         log('\x1b[32m ✔ found route definitions.\x1b[0m\n');
-        const mapOfRoutes = buildRouteMap(allRouteDefinitionsAsText, mapOfStaticImports, new Map(), file.fileName);
+        const mapOfRoutes = buildRouteMap(routeDefinitions, mapOfStaticImports, new Map(), file.fileName);
         return buildCytoscapeElements(mapOfRoutes, file.fileName);
     } else {
         console.error('\x1b[31m ✘ no route definitions.\x1b[0m');

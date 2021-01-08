@@ -4,7 +4,7 @@ import cise from 'cytoscape-cise';
 import {LayoutService} from './layout/layout.service';
 import {edgeStyle, nodeStyle, StylingService} from './styling/styling.service';
 
-const ALL_FILES = 'All files';
+const ALL_FILES = 'All files (clustered)';
 const isNodeSelected = (target: any, cy: Core) => target !== cy && !target.isEdge();
 const findNodeLazy = (route: string) => e => e.data().id.toUpperCase().includes(route.toUpperCase());
 const findDataNodeStrict = (route: string) => e => e.data.id.toUpperCase() === route.toUpperCase();
