@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/BenjaminBrandmeier/camel-net/workflows/CI/badge.svg)](https://github.com/{owner}/{repo}/actions)
+
 ![alt text](src/assets/logo.png "Title")
 # camel-net
 
