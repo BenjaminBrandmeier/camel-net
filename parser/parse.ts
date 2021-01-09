@@ -1,9 +1,12 @@
-import {File} from './types.ts';
+import {File, Route} from './types.ts';
 import {parseJavaFile} from './java-parser.ts';
 
-const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g)!;
+const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g);
 const shortenQualifier = (s: string) => s.split('').filter(c => [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ.'].includes(c)).join('');
 const removeAllQuotes = (routeDefiniton: string) => routeDefiniton.replaceAll('"', '');
+const escapeAllQuotes = (routeDefiniton: string) => routeDefiniton.replaceAll('"', '\\"');
+const replaceTabs = (routeDefiniton: string) => routeDefiniton.replaceAll('\u0009', '&emsp;');
+const replaceAllNewLines = (routeDefinition: string) => routeDefinition.replaceAll(/(\r\n|\n|\r)/g, '<br/>');
 const isQualifiedAlready = (to: string) => to.includes('.');
 const formatDataToBeValidJson = (visualizationData: string) => '[' + visualizationData.slice(0, -1) + ']';
 const writeDataToFile = (visualizationData: string) => Deno.writeTextFileSync('src/assets/data.json', visualizationData);
@@ -64,17 +67,18 @@ function buildStaticImportsMap(code: string): Map<string, string> {
     return mapOfStaticImports;
 }
 
-function buildRouteMap(allRouteDefinitions: string[], mapOfStaticImports: Map<string, string>, mapOfRoutes: Map<string, any>, qualifier: string): Map<string, string[]> {
-    allRouteDefinitions.forEach(r => {
-        const routeDefiniton = shortenQualifier(qualifier + '.').concat(r.match(/from\s*?\((.*?)\)/)![1]);
-        const routeDestinations = r.matchAll(/(?<!\/\/\s*)(\.to\((.*)\)|\.enrich\((.*?)[,|)]|\.wireTap\((.*?)\))/g);
+function buildRouteMap(allRouteDefinitions: string[], mapOfStaticImports: Map<string, string>, mapOfRoutes: Map<Route, any>, qualifier: string): Map<Route, string[]> {
+    allRouteDefinitions.forEach(routeDefinition => {
+        const routeName = removeAllQuotes(shortenQualifier(qualifier + '.').concat(routeDefinition.match(/from\s*?\((.*?)\)/)![1]));
+        const routeDestinations = routeDefinition.matchAll(/(?<!\/\/\s*)(\.to\((.*)\)|\.enrich\((.*?)[,|)]|\.wireTap\((.*?)\))/g);
+        const routeDefinitionAsSingleLine = replaceTabs(escapeAllQuotes(replaceAllNewLines(routeDefinition)));
 
         const destinations = [...routeDestinations].flatMap(to => to.filter(t => t).slice(2).map(t => removeAllQuotes(fullQualifyTo(t, mapOfStaticImports, qualifier)))).map(t => removeAllQuotes(t));
-        const destinationsWithoutDuplicates = [...new Set(destinations)]; // think about removing duplicates once more
+        const uniqueDestinations = [...new Set(destinations)]; // think about removing duplicates once more
 
-        destinationsWithoutDuplicates.filter(to => !mapOfRoutes.has(to)).forEach(to => mapOfRoutes.set(to, null));
-
-        mapOfRoutes.set(removeAllQuotes(routeDefiniton), destinationsWithoutDuplicates);
+        removeOldRouteEntry(mapOfRoutes, routeName);
+        addNewRouteEntry(mapOfRoutes, routeName, routeDefinitionAsSingleLine, uniqueDestinations);
+        addEntryForDestinationRoute(uniqueDestinations, mapOfRoutes);
     });
     return mapOfRoutes;
 }
@@ -91,11 +95,27 @@ function fullQualifyTo(to: string, mapOfStaticImports: Map<string, string>, qual
     }
 }
 
-function buildCytoscapeElements(mapOfRoutes: Map<string, string[]>, file: string): string {
-    let visualizationData = '\n' + [...mapOfRoutes.keys()].map(r => '{"data": { "id": "' + r + '", "file": "' + file + '" }},').join('\n');
+function removeOldRouteEntry(mapOfRoutes: Map<Route, any>, routeName: string): void {
+    [...mapOfRoutes.keys()]
+        .filter(r => r.name === routeName)
+        .forEach(r => mapOfRoutes.delete(r));
+}
+
+function addNewRouteEntry(mapOfRoutes: Map<Route, any>, routeName: string, routeDefinitionAsSingleLine: string, uniqueDestinations: any[]): void {
+    mapOfRoutes.set({name: routeName, routeDefinition: routeDefinitionAsSingleLine}, uniqueDestinations);
+}
+
+function addEntryForDestinationRoute(uniqueDestinations: any[], mapOfRoutes: Map<Route, any>): void {
+    uniqueDestinations
+        .filter(to => ![...mapOfRoutes.keys()].some(r => r.name === to))
+        .forEach(to => mapOfRoutes.set({name: to, routeDefinition: 'Route definition missing or visible when performing search.'}, null));
+}
+
+function buildCytoscapeElements(mapOfRoutes: Map<Route, string[]>, file: string): string {
+    let visualizationData = '\n' + [...mapOfRoutes.keys()].map(r => '{"data": { "id": "' + r.name + '", "file": "' + file + '", "routeDefinition": "' + r.routeDefinition + '" }},').join('\n');
     mapOfRoutes.forEach((tos, from) => {
         tos?.forEach(to => {
-            visualizationData += '\n{"data": { "id": "' + Math.random() + '", "source": "' + from + '", "target": "' + to + '", "file": "' + file + '" }},';
+            visualizationData += '\n{"data": { "id": "' + Math.random() + '", "source": "' + from.name + '", "target": "' + to + '", "file": "' + file + '" }},';
         });
     });
     return visualizationData;

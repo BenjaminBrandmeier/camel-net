@@ -3,12 +3,15 @@
 ![alt text](src/assets/logo.png "Title")
 # camel-net
 
-This is an attempt to create visualizations for Apache Camel routes.
+This is an attempt to visualize Apache Camel routes.
 
-The project visualizes dependencies between Camel routes across multiple packages within a single or multiple Java files. 
+The project visualizes dependencies between Camel routes across multiple packages across multiple Java files. 
+
 It provides a primitive search for routes and highlights all predecessors and successors of selected nodes inside a graph.
 
-camel-net tries to answer questions to specific challenges when working with Apache Camel. If you have more ideas about challenges that could be solved with this kind of an approach (or similar), please let me know.
+When right-clicking a node inside the visualization, the source code of the route definition will be displayed. This makes it easier to find out which path will be followed.
+
+camel-net tries to answer specific questions about challenges when working with Apache Camel. If you have more ideas about challenges that could be solved with this kind of an approach (or similar), please let me know.
 
 # Built with
 
@@ -20,7 +23,7 @@ camel-net tries to answer questions to specific challenges when working with Apa
 
 Live demo: https://oidamo.de/camel-net/
 
-![alt text](demo.png "camel-net screenshot")
+![alt text](camel-net_screenshot.png "camel-net screenshot")
 
 # Getting started
 
@@ -37,8 +40,7 @@ Live demo: https://oidamo.de/camel-net/
 * UI selection of different cytoscape layouts
 * ...
 
-
 # Further Remarks
 
 * Supported until now are .from, .to, .enrich, .wiretap navigations
-* Support for routes defined in XML does currently not exist (PR highly appreciated)
+* Support for routes defined in XML does not exist (and if nobody has the stamina to create a PR, it never will)

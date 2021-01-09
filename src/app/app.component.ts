@@ -3,6 +3,7 @@ import cytoscape, {CollectionReturnValue, Core, ElementDefinition} from 'cytosca
 import cise from 'cytoscape-cise';
 import {LayoutService} from './layout/layout.service';
 import {edgeStyle, nodeStyle, StylingService} from './styling/styling.service';
+import {PrettifyService} from './styling/prettify.service';
 
 const ALL_FILES = 'All files (clustered)';
 const isNodeSelected = (target: any, cy: Core) => target !== cy && !target.isEdge();
@@ -25,14 +26,16 @@ export class AppComponent implements OnInit {
     allFilenamesContainingRoutes = [];
     fileFilter = undefined;
     searchText = '';
+    routeDefinition = '';
 
     private cy: Core;
     private data: ElementDefinition[];
-    private originalData;
+    private originalData: ElementDefinition[];
     private focusedNode = null;
 
     constructor(private readonly stylingService: StylingService,
                 private readonly layoutService: LayoutService,
+                private readonly prettifyService: PrettifyService,
     ) {
     }
 
@@ -60,21 +63,30 @@ export class AppComponent implements OnInit {
         });
         this.cy.bind('click', this.onGraphElementClick(this.cy));
         this.cy.bind('tap', this.onGraphElementClick(this.cy));
+        this.cy.on('cxttap', e => this.onRightClick(e, this.prettifyService));
     }
 
     private getFancyLayout = () => this.layoutService.getDefaultLayout(getAllFilteredNodes(this.data, this.fileFilter), this.isPackageClusteringActive());
     private isPackageClusteringActive = (): boolean => this.fileFilter === ALL_FILES && this.searchText === '';
 
     private onGraphElementClick(cy: Core): (event) => void {
-        return (event) => {
+        return event => {
             this.allElements().forEach(e => this.stylingService.colorElement(e, 'grey'));
             this.focusedNode = null;
             const target = event.target;
+            this.routeDefinition = '';
             if (isNodeSelected(target, cy)) {
                 this.focusedNode = target;
                 this.stylingService.colorDependencyPath(target, this.allElements());
             }
         };
+    }
+
+    private onRightClick(event: cytoscape.EventObject, prettifyService: PrettifyService): void {
+        this.routeDefinition = '' || this.originalData
+            .filter(d => d.data.id === event.target.data().id && event.target.isNode())
+            .map(b => b.data.routeDefinition)
+            .map(b => prettifyService.prettifyRouteCode(b))[0];
     }
 
     onSearchRouteClick(): boolean {

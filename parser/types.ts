@@ -16,3 +16,8 @@ export interface Import {
     class: string;
     fqn: string;
 }
+
+export interface Route {
+    name: string;
+    routeDefinition: string;
+}
