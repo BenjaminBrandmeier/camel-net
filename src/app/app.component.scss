@@ -52,4 +52,17 @@
         margin-right: 5px;
         margin-left: auto;
     }
+
+    #routeDefinitionViewer {
+        position: absolute;
+        bottom: 0;
+        max-height: 50%;
+        max-width: 70%;
+        overflow: auto;
+        z-index: 4001;
+        background-color: #2a2a2b;
+        font-family: monospace;
+        padding: 10px 10px 10px 10px;
+        color:  #f2f2f2;
+    }
 }

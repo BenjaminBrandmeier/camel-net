@@ -1,5 +1,6 @@
 <div class="camel-net-container">
     <img id="logo" src="assets/logo.png"/>
+
     <div class="toolbar" role="banner">
         <h2>camel-net</h2>
         <input id="routeName" [(ngModel)]="searchText" placeholder="Route name">
@@ -9,5 +10,6 @@
         </select>
     </div>
 
+    <div id="routeDefinitionViewer" *ngIf="routeDefinition" [innerHTML]="routeDefinition"></div>
     <div class="content" role="main" id="cy"></div>
 </div>

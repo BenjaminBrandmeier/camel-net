@@ -14,7 +14,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.msg.Constants;
 import org.apache.camel.AggregationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.Complex.annotation.Profile;
+import org.springframework.complex.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.demo.services.song.TestFile;
@@ -241,7 +241,7 @@ public class DemoRoute {
 				.handled(false)
 				.end()
 				.routeId(URIEnchanter.enchantURI(CHECK_THE_NEWS))
-				.setProperty(Flavor_DESTINATION).ognl("request.body.Complex.getInstanceForSystem('Flavor')")
+				.setProperty(Flavor_DESTINATION).ognl("request.body.complex.getInstanceForSystem('Flavor')")
 				.to(BasisRoute.GET_DISTRACTED_FOR_TOO_LONG)
 				.convertBodyTo(CreateRABBITFromTemplateRequestType.class)
 				.setHeader(Constants.OPERATION_NAME).simple(OP_CREATE_RABBIT_FROM_TEMPLATE)
