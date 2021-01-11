@@ -15,7 +15,8 @@
         "test-frontend": "jest",
         "lint": "ng lint",
         "parse": "deno run --allow-read --allow-write --allow-run parser/parse.ts",
-        "postbuild": "sed -ie 's/<base href=\"\\/\">/<base href=\"\\/camel-net\\/\">/g' dist/camel-net/index.html"
+        "dist": "npm run build",
+        "dist-oidamo": "npm run build && sed -ie 's/<base href=\"\\/\">/<base href=\"\\/camel-net\\/\">/g' dist/camel-net/index.html"
     },
     "private": true,
     "dependencies": {
