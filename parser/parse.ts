@@ -1,5 +1,6 @@
 import {File, Route} from './types.ts';
 import {parseJavaFile} from './java-parser.ts';
+import {ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE} from '../src/shared/constants.ts';
 
 const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g);
 const shortenQualifier = (s: string) => s.split('').filter(c => [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ.'].includes(c)).join('');
@@ -108,7 +109,7 @@ function addNewRouteEntry(mapOfRoutes: Map<Route, any>, routeName: string, route
 function addEntryForDestinationRoute(uniqueDestinations: any[], mapOfRoutes: Map<Route, any>): void {
     uniqueDestinations
         .filter(to => ![...mapOfRoutes.keys()].some(r => r.name === to))
-        .forEach(to => mapOfRoutes.set({name: to, routeDefinition: 'Route definition missing or visible when performing search.'}, null));
+        .forEach(to => mapOfRoutes.set({name: to, routeDefinition: ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE}, null));
 }
 
 function buildCytoscapeElements(mapOfRoutes: Map<Route, string[]>, file: string): string {

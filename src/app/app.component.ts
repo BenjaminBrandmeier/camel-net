@@ -4,6 +4,7 @@ import cise from 'cytoscape-cise';
 import {LayoutService} from './layout/layout.service';
 import {edgeStyle, nodeStyle, StylingService} from './styling/styling.service';
 import {PrettifyService} from './styling/prettify.service';
+import {ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE} from '../shared/constants';
 
 const ALL_FILES = 'All files (clustered)';
 const isNodeSelected = (target: any, cy: Core) => target !== cy && !target.isEdge();
@@ -15,6 +16,8 @@ const isElementPartOfAppliedFilter = (element: ElementDefinition, filter: string
 const isActualNode = e => !e.data.hasOwnProperty('source') && !e.data.hasOwnProperty('target');
 const getAllFilteredElementDefinitions = (data, filter: string) => data.filter(e => isElementPartOfAppliedFilter(e, filter));
 const getAllFilteredNodes = (data, filter) => getAllFilteredElementDefinitions(data, filter).filter(isActualNode);
+const isActualRouteDefinition = routeDefinition => routeDefinition !== ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE;
+const findSelectedNode = (event: cytoscape.EventObject) => d => d.data.id === event.target.data().id && event.target.isNode();
 
 @Component({
     selector: 'app-root',
@@ -51,7 +54,10 @@ export class AppComponent implements OnInit {
                 this.fileFilter = this.fileFilter ?? this.allFilenamesContainingRoutes[0];
             })
             .then(() => this.initializeCytoscape())
-            .catch((r) => console.error(r, '\n\nInitialization of camel-net failed. \nPlease follow the guide on \n\nhttps://github.com/BenjaminBrandmeier/camel-net'));
+            .catch((r) => console.error(r, '\n\nInitialization of camel-net failed. ' +
+                '\nIf you want to visualize your own camel routes, please follow the guide on ' +
+                '\n\nhttps://github.com/BenjaminBrandmeier/camel-net' +
+                '\n\nIf you want to run the demo only, rename src/assets/demo_data.json to data.json.'));
     }
 
     private initializeCytoscape(useFancyLayout = true): void {
@@ -83,10 +89,12 @@ export class AppComponent implements OnInit {
     }
 
     private onRightClick(event: cytoscape.EventObject, prettifyService: PrettifyService): void {
-        this.routeDefinition = '' || this.originalData
-            .filter(d => d.data.id === event.target.data().id && event.target.isNode())
-            .map(b => b.data.routeDefinition)
-            .map(b => prettifyService.prettifyRouteCode(b))[0];
+        this.routeDefinition = this.originalData
+                .filter(findSelectedNode(event))
+                .map(b => b.data.routeDefinition)
+                .map(r => prettifyService.prettifyRouteCode(r))
+                .filter(isActualRouteDefinition)[0]
+            ?? ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE;
     }
 
     onSearchRouteClick(): boolean {
