@@ -14,7 +14,7 @@
         "test-parser": "deno test parser/test/*.ts --allow-read",
         "test-frontend": "jest",
         "lint": "ng lint",
-        "parse": "deno run --allow-read --allow-write --allow-run parser/parse.ts",
+        "parse": "deno run --allow-read --allow-write --allow-run parser/parser.ts",
         "dist": "npm run build",
         "dist-oidamo": "npm run build && sed -ie 's/<base href=\"\\/\">/<base href=\"\\/camel-net\\/\">/g' dist/camel-net/index.html"
     },

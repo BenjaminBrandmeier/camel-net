@@ -1,5 +1,4 @@
 import {File, Route} from './types.ts';
-import {parseJavaFile} from './java-parser.ts';
 import {ROUTE_DEFINITION_PLACEHOLDER_FOR_NONEXISTING_CODE} from '../src/shared/constants.ts';
 
 const getAllRouteDefinitions = (code: string) => code.match(/from\s?\((.|\n|\r)*?;/g);
@@ -9,51 +8,16 @@ const escapeAllQuotes = (routeDefiniton: string) => routeDefiniton.replaceAll('"
 const replaceTabs = (routeDefiniton: string) => routeDefiniton.replaceAll('\u0009', '&emsp;');
 const replaceAllNewLines = (routeDefinition: string) => routeDefinition.replaceAll(/(\r\n|\n|\r)/g, '<br/>');
 const isQualifiedAlready = (to: string) => to.includes('.');
-const formatDataToBeValidJson = (visualizationData: string) => '[' + visualizationData.slice(0, -1) + ']';
-const writeDataToFile = (visualizationData: string) => Deno.writeTextFileSync('src/assets/data.json', visualizationData);
 const log = (text: string) => Deno.writeAllSync(Deno.stdout, new TextEncoder().encode(text));
 
-function start(): void {
-    const camelProjectPath = Deno.args[0];
-    if (camelProjectPath) {
-        generateVisualizationDataForAllProvidedFiles(camelProjectPath);
-    } else {
-        console.error('\x1b[31m\nScan failed!\x1b[0m');
-        console.log('\nNo directory to camel project provided. Usage:\nnpm run parse -- path/to/directory\n');
-    }
-}
-
-function generateVisualizationDataForAllProvidedFiles(projectPath: string): void {
-    const visualizationData = findAllFilesToBeParsed(projectPath, [])
-        .map(parseJavaFile)
-        .map(buildVisualizationDataForSingleFile)
-        .filter(v => v)
-        .join('\n');
-
-    writeDataToFile(formatDataToBeValidJson(visualizationData));
-    console.log('Finished.');
-}
-
-function findAllFilesToBeParsed(currentPath: string, allFilesToBeParsed: string[]): string[] {
-    const allFilesInsideCurrentPath = Deno.readDirSync(currentPath);
-    [...allFilesInsideCurrentPath].forEach(d => {
-        if (d.isDirectory) {
-            findAllFilesToBeParsed(currentPath + '/' + d.name, allFilesToBeParsed);
-        } else if (d.isFile && d.name.includes('.java') && !d.name.endsWith('Test.java')) {
-            allFilesToBeParsed.push(currentPath + '/' + d.name);
-        }
-    });
-    return allFilesToBeParsed;
-}
-
-function buildVisualizationDataForSingleFile(file: File): string | undefined {
+export function buildVisualizationDataForSingleFile(file: File): string | undefined {
     log('Parsing ' + file.path);
     const fileContent = Deno.readTextFileSync(file.path);
     const mapOfStaticImports = buildStaticImportsMap(fileContent);
     const routeDefinitions = getAllRouteDefinitions(fileContent);
     if (routeDefinitions) {
         log('\x1b[32m ✔ found route definitions.\x1b[0m\n');
-        const mapOfRoutes = buildRouteMap(routeDefinitions, mapOfStaticImports, new Map(), file.fileName);
+        const mapOfRoutes = buildRouteMap(routeDefinitions, mapOfStaticImports, file.fileName);
         return buildCytoscapeElements(mapOfRoutes, file.fileName);
     } else {
         console.error('\x1b[31m ✘ no route definitions.\x1b[0m');
@@ -68,7 +32,8 @@ function buildStaticImportsMap(code: string): Map<string, string> {
     return mapOfStaticImports;
 }
 
-function buildRouteMap(allRouteDefinitions: string[], mapOfStaticImports: Map<string, string>, mapOfRoutes: Map<Route, any>, qualifier: string): Map<Route, string[]> {
+function buildRouteMap(allRouteDefinitions: string[], mapOfStaticImports: Map<string, string>, qualifier: string): Map<Route, string[]> {
+    const mapOfRoutes = new Map();
     allRouteDefinitions.forEach(routeDefinition => {
         const routeName = removeAllQuotes(shortenQualifier(qualifier + '.').concat(routeDefinition.match(/from\s*?\((.*?)\)/)![1]));
         const uniqueDestinations = getAllUniqueDestinationsOfSingleRoute(routeDefinition, mapOfStaticImports, qualifier);
@@ -88,7 +53,7 @@ function getAllUniqueDestinationsOfSingleRoute(routeDefinition: string, mapOfSta
             .slice(1) // remove entire string match
             .filter(t => t)
             .flatMap(t => t
-                .split(',') // multiple destinations inside .to( possible
+                .split(',') // multiple destinations inside .to() possible
                 .map(toRoute => toRoute.trim())
                 .map(s => removeAllQuotes(fullQualifyTo(s, mapOfStaticImports, qualifier)))))
         .map(t => removeAllQuotes(t));
@@ -133,5 +98,3 @@ function buildCytoscapeElements(mapOfRoutes: Map<Route, string[]>, file: string)
     });
     return visualizationData;
 }
-
-start();
