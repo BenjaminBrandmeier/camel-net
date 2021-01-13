@@ -71,17 +71,29 @@ function buildStaticImportsMap(code: string): Map<string, string> {
 function buildRouteMap(allRouteDefinitions: string[], mapOfStaticImports: Map<string, string>, mapOfRoutes: Map<Route, any>, qualifier: string): Map<Route, string[]> {
     allRouteDefinitions.forEach(routeDefinition => {
         const routeName = removeAllQuotes(shortenQualifier(qualifier + '.').concat(routeDefinition.match(/from\s*?\((.*?)\)/)![1]));
-        const routeDestinations = routeDefinition.matchAll(/(?<!\/\/\s*)(\.to\((.*)\)|\.enrich\((.*?)[,|)]|\.wireTap\((.*?)\))/g);
+        const uniqueDestinations = getAllUniqueDestinationsOfSingleRoute(routeDefinition, mapOfStaticImports, qualifier);
         const routeDefinitionAsSingleLine = replaceTabs(escapeAllQuotes(replaceAllNewLines(routeDefinition)));
-
-        const destinations = [...routeDestinations].flatMap(to => to.filter(t => t).slice(2).map(t => removeAllQuotes(fullQualifyTo(t, mapOfStaticImports, qualifier)))).map(t => removeAllQuotes(t));
-        const uniqueDestinations = [...new Set(destinations)]; // think about removing duplicates once more
 
         removeOldRouteEntry(mapOfRoutes, routeName);
         addNewRouteEntry(mapOfRoutes, routeName, routeDefinitionAsSingleLine, uniqueDestinations);
         addEntryForDestinationRoute(uniqueDestinations, mapOfRoutes);
     });
     return mapOfRoutes;
+}
+
+function getAllUniqueDestinationsOfSingleRoute(routeDefinition: string, mapOfStaticImports: Map<string, string>, qualifier: string): string[] {
+    const routeDestinations = routeDefinition.matchAll(/(?<!\/\/\s*)(?:\.to\(([\s\S]*?)\)|\.enrich\((.*?)[,|)]|\.wireTap\((.*?)\))/g);
+    const destinations = [...routeDestinations]
+        .flatMap(matches => matches
+            .slice(1) // remove entire string match
+            .filter(t => t)
+            .flatMap(t => t
+                .split(',') // multiple destinations inside .to( possible
+                .map(toRoute => toRoute.trim())
+                .map(s => removeAllQuotes(fullQualifyTo(s, mapOfStaticImports, qualifier)))))
+        .map(t => removeAllQuotes(t));
+
+    return [...new Set(destinations)]; // think about removing duplicates once more
 }
 
 function fullQualifyTo(to: string, mapOfStaticImports: Map<string, string>, qualifier: string): string {
