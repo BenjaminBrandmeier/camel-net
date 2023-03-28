@@ -1,5 +1,3 @@
-[![Actions Status](https://github.com/BenjaminBrandmeier/camel-net/workflows/CI/badge.svg)]((https://github.com/BenjaminBrandmeier/camel-net/actions))
-
 ![alt text](src/assets/logo.png "Title")
 # camel-net
 
