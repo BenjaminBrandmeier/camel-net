@@ -19,7 +19,7 @@ camel-net tries to answer specific questions about challenges when working with 
 
 # Demo
 
-Live demo: https://oidamo.de/camel-net/
+Live demo: https://oidamo.de/blog/camel-net/
 
 ![alt text](camel-net_screenshot.png "camel-net screenshot")
 
