@@ -69,18 +69,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "camel-net:build"
+                      "buildTarget": "camel-net:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "camel-net:build:production"
+                          "buildTarget": "camel-net:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "camel-net:build"
+                      "buildTarget": "camel-net:build"
                     }
                 },
                 "lint": {
