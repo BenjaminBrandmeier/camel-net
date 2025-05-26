@@ -5,7 +5,7 @@
         <h2>camel-net</h2>
         <input id="routeName" [(ngModel)]="searchText" placeholder="Route name">
         <button (click)="onSearchRouteClick()">Search</button>
-        <select (change)="onFilterChange($event.target.value)" [(ngModel)]="fileFilter">
+        <select (change)="onFilterChange(($event.target as HTMLSelectElement).value)" [(ngModel)]="fileFilter">
             <option *ngFor="let option of allFilenamesContainingRoutes">{{option}}</option>
         </select>
     </div>

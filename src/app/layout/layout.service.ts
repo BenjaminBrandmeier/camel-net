@@ -11,7 +11,7 @@ interface NodeQualifier {
 })
 export class LayoutService {
 
-    getDefaultLayout(allElementDefinitions: ElementDefinition[], isClusteredViaPackages: boolean): any { // no typedef for cise layout yet :(
+    getDefaultLayout(allElementDefinitions: ElementDefinition[], isClusteredViaPackages: boolean): Record<string, any> {
         return ciseLayout(isClusteredViaPackages ? this.createNodeClusters(allElementDefinitions) : undefined);
     }
 
@@ -32,7 +32,7 @@ export class LayoutService {
     })
 }
 
-const ciseLayout = (nodeClusters: string[][]) => ({
+const ciseLayout = (nodeClusters: string[][] | undefined): Record<string, any> => ({
     name: 'cise',
 
     // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids.

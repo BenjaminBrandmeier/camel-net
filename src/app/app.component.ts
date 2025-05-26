@@ -23,15 +23,15 @@ const getAllFilteredNodes = (data, filter) => getAllFilteredElementDefinitions(d
 })
 export class AppComponent implements OnInit {
 
-    allFilenamesContainingRoutes = [];
-    fileFilter = undefined;
+    allFilenamesContainingRoutes: string[] = [];
+    fileFilter: string | undefined = undefined;
     searchText = '';
     routeDefinition = '';
 
-    private cy: Core;
-    private data: ElementDefinition[];
-    private originalData: ElementDefinition[];
-    private focusedNode = null;
+    private cy!: Core;
+    private data!: ElementDefinition[];
+    private originalData!: ElementDefinition[];
+    private focusedNode: any = null;
 
     constructor(private readonly stylingService: StylingService,
                 private readonly layoutService: LayoutService,
@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
     private getFancyLayout = () => this.layoutService.getDefaultLayout(getAllFilteredNodes(this.data, this.fileFilter), this.isPackageClusteringActive());
     private isPackageClusteringActive = (): boolean => this.fileFilter === ALL_FILES && this.searchText === '';
 
-    private onGraphElementClick(cy: Core): (event) => void {
+    private onGraphElementClick(cy: Core): (event: cytoscape.EventObject) => void {
         return event => {
             this.allElements().forEach(e => this.stylingService.colorElement(e, 'grey'));
             this.focusedNode = null;

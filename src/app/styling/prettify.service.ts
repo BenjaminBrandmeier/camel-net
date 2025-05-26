@@ -8,11 +8,17 @@ export class PrettifyService {
     }
 
     prettifyRouteCode(code: string): string {
-        code = this.highlight(code, /(class|new|this)/g, 'pink');
-        code = this.highlight(code, /([A-Z]\w+)\./g, 'orange');
-        code = this.highlight(code, /new (.*?)\(/g, 'orange');
-        code = this.highlight(code, /(".*?")/g, 'cyan');
-        return code;
+        if (!code) return '';
+        
+        const patterns: Array<[RegExp, string]> = [
+            [/(class|new|this)/g, 'pink'],
+            [/([A-Z]\w+)\./g, 'orange'],
+            [/new (.*?)\(/g, 'orange'],
+            [/(".*?")/g, 'cyan']
+        ];
+
+        return patterns.reduce((acc, [pattern, color]) => 
+            this.highlight(acc, pattern, color), code);
     }
 
     private highlight(code: string, pattern: RegExp, color: string): string {
