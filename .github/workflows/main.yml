@@ -14,15 +14,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: denolib/setup-deno@v2
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
+
+      - name: Install node dependencies
+        run: npm ci
 
       - name: Test parser
         run: npm run test-parser
-
-      - name: Install node dependencies
-        run: npm install
 
       - name: Test frontend
         run: npm run test-frontend
