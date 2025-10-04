@@ -19,7 +19,8 @@ const getAllFilteredNodes = (data, filter) => getAllFilteredElementDefinitions(d
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent implements OnInit {
 
@@ -83,10 +84,10 @@ export class AppComponent implements OnInit {
     }
 
     private onRightClick(event: cytoscape.EventObject, prettifyService: PrettifyService): void {
-        this.routeDefinition = '' || this.originalData
+        this.routeDefinition = this.originalData
             .filter(d => d.data.id === event.target.data().id && event.target.isNode())
             .map(b => b.data.routeDefinition)
-            .map(b => prettifyService.prettifyRouteCode(b))[0];
+            .map(b => prettifyService.prettifyRouteCode(b))[0] || '';
     }
 
     onSearchRouteClick(): boolean {
