@@ -1,0 +1,47 @@
+{
+  "version": "5",
+  "remote": {
+    "https://deno.land/std@0.83.0/fmt/colors.ts": "c5665c66f1a67228f21c5989bbb04b36d369b98dd7ceac06f5e26856c81c2531",
+    "https://deno.land/std@0.83.0/testing/_diff.ts": "9656b2dbe0a76684e705375fd03bfe0108e9e00845ccb9e47abff52f156fe4e8",
+    "https://deno.land/std@0.83.0/testing/asserts.ts": "a8d30ca52b1bf4f928c521e80b58d04ed3930b9507c598cfffd1ecedf3f6eaf2"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@angular-devkit/build-angular@20",
+        "npm:@angular/animations@20",
+        "npm:@angular/cli@20",
+        "npm:@angular/common@20",
+        "npm:@angular/compiler-cli@20",
+        "npm:@angular/compiler@20",
+        "npm:@angular/core@20",
+        "npm:@angular/forms@20",
+        "npm:@angular/platform-browser-dynamic@20",
+        "npm:@angular/platform-browser@20",
+        "npm:@angular/router@20",
+        "npm:@types/cytoscape@^3.14.11",
+        "npm:@types/jasmine@3.6",
+        "npm:@types/jest@^26.0.19",
+        "npm:@types/node@^12.11.1",
+        "npm:codelyzer@6",
+        "npm:cytoscape-cise@1",
+        "npm:cytoscape-cola@^2.4.0",
+        "npm:cytoscape-spread@3",
+        "npm:cytoscape@^3.17.1",
+        "npm:jasmine-core@3.6",
+        "npm:jasmine-spec-reporter@5.0",
+        "npm:jest-preset-angular@^14.2.4",
+        "npm:jest@^29.7.0",
+        "npm:karma-coverage@~2.0.3",
+        "npm:protractor@7.0",
+        "npm:rxjs@6.6",
+        "npm:ts-jest@^29.1.1",
+        "npm:ts-node@8.3",
+        "npm:tslib@2",
+        "npm:tslint@6.1",
+        "npm:typescript@~5.8.3",
+        "npm:zone.js@0.15"
+      ]
+    }
+  }
+}

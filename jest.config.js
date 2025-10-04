@@ -1,4 +1,3 @@
-const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const { compilerOptions } = require('./tsconfig');
 
 module.exports = {
@@ -9,7 +8,4 @@ module.exports = {
     collectCoverage: true,
     coverageReporters: ['html'],
     coverageDirectory: 'coverage/my-app',
-    moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-        prefix: '<rootDir>/',
-    }),
 };
