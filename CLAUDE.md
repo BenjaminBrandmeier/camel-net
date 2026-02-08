@@ -28,7 +28,7 @@ Key files:
 
 ### 2. Frontend (Angular)
 
-Located in `/src/`, this Angular 20 application:
+Located in `/src/`, this Angular 21 application:
 
 - Loads parsed route data from `assets/data.json`
 - Renders interactive graph visualization using Cytoscape.js with CISE layout algorithm
@@ -66,12 +66,6 @@ npm run test-frontend       # Run Jest tests for Angular code
 npm run test-parser         # Run Deno tests for parser
 ```
 
-### Linting
-
-```bash
-npm run lint                # Run Angular linter
-```
-
 ### Parsing Java projects
 
 ```bash
@@ -84,11 +78,12 @@ This command must be run before starting the application with actual route data.
 
 ### Angular Version Management
 
-- Currently on Angular 20 with TypeScript 5.8.3
+- Currently on Angular 21 with TypeScript 5.9.3
+- Linting is not currently configured (tslint was removed during Angular 21 migration)
 - When upgrading Angular versions:
   - Update all `@angular/*` packages together to the same version
   - Update `@angular/cli` and `@angular-devkit/build-angular` to match
-  - Check Angular release notes for required TypeScript version (e.g., Angular 20 requires TypeScript >= 5.8)
+  - Check Angular release notes for required TypeScript version (e.g., Angular 21 requires TypeScript >= 5.9)
   - Components are not standalone by default - use `standalone: false` in component decorator
 
 ### TypeScript Configuration

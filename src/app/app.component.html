@@ -1,15 +1,19 @@
 <div class="camel-net-container">
-    <img id="logo" src="assets/logo.png"/>
+  <img id="logo" src="assets/logo.png"/>
 
-    <div class="toolbar" role="banner">
-        <h2>camel-net</h2>
-        <input id="routeName" [(ngModel)]="searchText" placeholder="Route name">
-        <button (click)="onSearchRouteClick()">Search</button>
-        <select (change)="onFilterChange($event.target.value)" [(ngModel)]="fileFilter">
-            <option *ngFor="let option of allFilenamesContainingRoutes">{{option}}</option>
-        </select>
-    </div>
+  <div class="toolbar" role="banner">
+    <h2>camel-net</h2>
+    <input id="routeName" [(ngModel)]="searchText" placeholder="Route name">
+    <button (click)="onSearchRouteClick()">Search</button>
+    <select (change)="onFilterChange($event.target.value)" [(ngModel)]="fileFilter">
+      @for (option of allFilenamesContainingRoutes; track option) {
+        <option>{{option}}</option>
+      }
+    </select>
+  </div>
 
-    <div id="routeDefinitionViewer" *ngIf="routeDefinition" [innerHTML]="routeDefinition"></div>
-    <div class="content" role="main" id="cy"></div>
+  @if (routeDefinition) {
+    <div id="routeDefinitionViewer" [innerHTML]="routeDefinition"></div>
+  }
+  <div class="content" role="main" id="cy"></div>
 </div>
